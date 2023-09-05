@@ -1,0 +1,55 @@
+# Игнорировать библиотеку и файлы временного хранилища
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Mm]emoryCaptures/
+/[Pp]ackages/
+
+# Игнорировать файлы проекта и настройки
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+
+# Игнорировать бинарные файлы
+*.dll
+*.unitypackage
+
+# Игнорировать файлы метаданных
+*.meta
+
+# Игнорировать файлы автосохранения
+*.asset
+
+# Игнорировать файлы профиля
+*.profile
+
+# Игнорировать файлы сцен и сценарии
+*.unity
+*.unitypackage
+
+# Игнорировать файлы локализации
+/[Rr]esources/
+
+# Игнорировать файлы настроек проекта
+/[Pp]rojectSettings/
+*.tmproj
+
+# Игнорировать файлы настроек пользователя
+/[Uu]serSettings/
+
+# Игнорировать бэкапы
+*.bak
+
+# Игнорировать .DS_Store файлы (Mac)
+.DS_Store
