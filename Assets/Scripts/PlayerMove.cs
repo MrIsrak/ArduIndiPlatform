@@ -11,11 +11,13 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
     private float horizontalInput; // Переменная для хранения ввода по горизонтали (например, клавиши A/D или стрелки).
     public float speed; // Публичное поле для настройки скорости перемещения персонажа.
-    public float jumpforce = 3500000; // Публичное поле для настройки силы прыжка персонажа.
+    private float jumpforce = 350000; // Публичное поле для настройки силы прыжка персонажа.
     private bool isOnGround; // Переменная для отслеживания, находится ли персонаж на земле.
     private float CheckRadius = 0.05f; // Радиус проверки земли при использовании Physics2D.OverlapCircle.
     private bool isFlipping; // Переменная для предотвращения многократного отражения персонажа по горизонтали.
     private float flipCooldown = 0.1f; // Время задержки между отражениями (предотвращение быстрого изменения направления).
+   
+
     public float smoothness = 0.5f; // Публичное поле для настройки плавности движения.
     private Vector2 targetPosition; // Переменная для хранения целевой позиции при выполнении плавного прыжка.
     private bool jumpControl;
@@ -40,6 +42,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         Move(); // Вызываем метод для обработки движения.
         Jump(); // Вызываем метод для обработки прыжка.
         CheckGround(); // Вызываем метод для проверки, находится ли персонаж на земле.
+        Dash();
     }
 
     private void FixedUpdate()
@@ -49,6 +52,8 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
     }
 
+
+    private bool RightFlip;
     private void Move()
     {
         horizontalInput = Input.GetAxis("Horizontal"); // Получаем ввод по горизонтали.
@@ -58,12 +63,14 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         {
             spriteRenderer.flipX = true; // Отражаем спрайт, если двигаемся влево.
             isFlipping = true;
+            RightFlip = false;
             StartCoroutine(ResetFlipCooldown()); // Запускаем корутину для предотвращения частого отражения.
         }
         else if (horizontalInput > 0 && !isFlipping)
         {
             spriteRenderer.flipX = false; // Не отражаем спрайт, если двигаемся вправо.
             isFlipping = true;
+            RightFlip = true;
             StartCoroutine(ResetFlipCooldown()); // Запускаем корутину для предотвращения частого отражения.
         }
 
@@ -103,5 +110,21 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask); // Проверяем, находится ли персонаж на земле.
         anim.SetBool("onGround", isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
+    }
+
+
+    private int lungueImpulse = 5000;
+    private void Dash()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            anim.StopPlayback();
+            anim.Play("Dash");
+
+            rb.velocity = new Vector2(0, 0);
+
+            if (!RightFlip) { rb.AddForce(Vector2.left * lungueImpulse); }
+            else { rb.AddForce(Vector2.right * lungueImpulse); }
+        }
     }
 }
