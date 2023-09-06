@@ -113,18 +113,31 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     }
 
 
-    private int lungueImpulse = 5000;
+    private int lungueImpulse = 500;
+    private bool dash = false;
     private void Dash()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             anim.StopPlayback();
-            anim.Play("Dash");
+            dash = true;
+            anim.SetBool("dash", dash);
 
-            rb.velocity = new Vector2(0, 0);
+            //anim.Play("Dash");
+
+            //rb.velocity = Vector2.zero; // Сброс текущей скорости.
 
             if (!RightFlip) { rb.AddForce(Vector2.left * lungueImpulse); }
             else { rb.AddForce(Vector2.right * lungueImpulse); }
+
+            StartCoroutine(ResetDashCooldown()); // Запускаем корутину для предотвращения частого отражения.
         }
+        else { dash = false; }
     }
+
+    private IEnumerator ResetDashCooldown()
+    {
+        yield return new WaitForSeconds(flipCooldown); // Ждем указанное время перед сбросом isFlipping.
+    }
+
 }
