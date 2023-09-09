@@ -1,3 +1,7 @@
+using System.Collections; // Импортируем пространство имен для работы с коллекциями (например, списками и массивами).
+using System.Collections.Generic; // Импортируем пространство имен для работы с обобщенными коллекциями.
+using System.ComponentModel; // Импортируем пространство имен для работы с компонентами и свойствами.
+using System.Threading; // Импортируем пространство имен для работы с потоками.
 using UnityEngine; // Импортируем пространство имен Unity для доступа к функциональности движка.
 
 public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который наследуется от MonoBehaviour (базового класса для скриптов в Unity).
@@ -40,6 +44,8 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
     }
 
+    private bool faceRight = false;
+
     private void Move()
     {
         horizontalInput = Input.GetAxis("Horizontal"); // Получаем ввод по горизонтали.
@@ -50,10 +56,12 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
         if (horizontalInput < 0)
         {
+            faceRight = false;
             spriteRenderer.flipX = true; // Flip the sprite horizontally if moving left
         }
         else if (horizontalInput > 0)
         {
+            faceRight = true;
             spriteRenderer.flipX = false; // Unflip the sprite horizontally if
         }
     }
@@ -71,5 +79,22 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask); // Проверяем, находится ли персонаж на земле.
         anim.SetBool("onGround", !isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
+    }
+
+    private int Impuls = 5000;
+    private void Dash()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftShift)
+        {
+            anim.StopPlayback();
+            //anim.Play();
+
+            rb.velocity = new Vector2(0, 0);
+
+            if (!faceRight) { rb.AddForce(Vector2.left * Impuls); }
+            else { rb.AddForce(Vector2.right * Impuls); }
+
+
+        }
     }
 }
