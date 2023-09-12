@@ -34,6 +34,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     {
         Move(); // Вызываем метод для обработки движения.
         Jump(); // Вызываем метод для обработки прыжка.
+        Dash();
         CheckGround(); // Вызываем метод для проверки, находится ли персонаж на земле.
     }
 
@@ -81,20 +82,37 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         anim.SetBool("onGround", !isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
     }
 
-    private int Impuls = 5000;
+    public int Impuls = 500000;
+    private bool isDashing = true;
+
     private void Dash()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift)
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            anim.StopPlayback();
-            //anim.Play();
+            isDashing = true;
+            anim.SetBool("isDashing", isDashing);
+            
+            //anim.StopPlayback();
+            //anim.Play("Dash");
+            //Debug.Log("Dash");
+            
+            //rb.velocity = new Vector2(0, 0);
 
-            rb.velocity = new Vector2(0, 0);
+            Vector2 dashDirection = faceRight ? Vector2.right : Vector2.left;
 
-            if (!faceRight) { rb.AddForce(Vector2.left * Impuls); }
-            else { rb.AddForce(Vector2.right * Impuls); }
+            rb.AddForce(dashDirection * Impuls);
+            Debug.Log(message: "Imp");
+            isDashing = false;
+            anim.SetBool("isDashing", isDashing);
+            StartCoroutine(DisableDash(1f));
 
-
+            
         }
+    }
+
+    private IEnumerator DisableDash(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        //isDashing = true;
     }
 }
