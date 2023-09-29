@@ -80,12 +80,12 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     private void CheckGround()
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask); // Проверяем, находится ли персонаж на земле.
-        Debug.Log(isOnGround);
+        //Debug.Log(isOnGround);
         anim.SetBool("onGround", isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
     }
 
 
-    public long dashForce = 999999999999999999;
+    public int dashForce = 9999;
 
     private void Dash()
     {
@@ -96,15 +96,17 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
             //Vector2 dashDirection = faceRight ? Vector2.right : Vector2.left;
 
             // Добавляем силу Impuls к Rigidbody2D
-            if (spriteRenderer.flipX == false)
+            Vector2 dashDirection;
+            if (spriteRenderer.flipX == true)
             {
-                rb.AddForce(Vector2.right * dashForce);
+                dashDirection = Vector2.left;
             }
             else
             {
-                rb.AddForce(Vector2.left * dashForce);
+                dashDirection = Vector2.right;
             }
 
+            rb.AddForce(dashDirection * dashForce);
 
 
             // Получение информации о текущей анимации
@@ -115,7 +117,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
 
             // Отключаем Dash через корутину
-            StartCoroutine(DisableDash(duration));
+            StartCoroutine(DisableDash(0.7f));
 
             // После задержки, когда корутина завершилась, устанавливаем isDashing в false
             anim.SetBool("isDashing", false);
@@ -126,22 +128,5 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     {
         yield return new WaitForSeconds(delay);
     }
-    //void Lunge()
-    //{
 
-    //    if (Input.GetKeyDown(KeyCode.LeftControl))
-    //    {
-    //        anim.StopPlayback();
-    //        anim.Play("Dash");
-
-    //        rb.velocity = new Vector2(0, 0);
-
-    //        if (spriteRenderer.flipX == false) { rb.AddForce(Vector2.right * Impuls); }
-
-    //        else { rb.AddForce(Vector2.left * Impuls); }
-    //    }
-
-
-
-    //}
 }
