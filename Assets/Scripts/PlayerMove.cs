@@ -11,11 +11,11 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     [SerializeField] private LayerMask groundMask; // Поле groundMask для задания маски слоя земли.
 
     private float horizontalInput; // Переменная для хранения ввода по горизонтали (например, клавиши A/D или стрелки).
-    public float speed; // Публичное поле для настройки скорости перемещения персонажа.
+    private float speed = 8; // Публичное поле для настройки скорости перемещения персонажа.
     private float jumpforce = 200000; // Публичное поле для настройки силы прыжка персонажа.
     private bool isOnGround; // Переменная для отслеживания, находится ли персонаж на земле.
     private float CheckRadius = 0.05f; // Радиус проверки земли при использовании Physics2D.OverlapCircle.
-    public float smoothness = 0.5f; // Публичное поле для настройки плавности движения.
+    private float smoothness = 0.5f; // Публичное поле для настройки плавности движения.
 
 
     private SpriteRenderer spriteRenderer; // Переменная для доступа к компоненту SpriteRenderer объекта (для изменения отображения спрайта).
@@ -80,7 +80,6 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     private void CheckGround()
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask); // Проверяем, находится ли персонаж на земле.
-        //Debug.Log(isOnGround);
         anim.SetBool("onGround", isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
     }
 
@@ -91,9 +90,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     {
         if (Input.GetKeyDown(KeyCode.LeftShift)) // Добавьте проверку !isDashing, чтобы не запускать Dash, если уже выполняется
         {
-            //rb.velocity = new Vector2(0, 0);
             anim.SetBool("isDashing", true);
-            //Vector2 dashDirection = faceRight ? Vector2.right : Vector2.left;
 
             // Добавляем силу Impuls к Rigidbody2D
             Vector2 dashDirection;
@@ -110,23 +107,25 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
 
             // Получение информации о текущей анимации
-            AnimatorStateInfo currentState = anim.GetCurrentAnimatorStateInfo(0);
+            //AnimatorStateInfo currentState = anim.GetCurrentAnimatorStateInfo(0);
 
             // Получение длительности текущей анимации
-            float duration = currentState.length;
+            //float duration = currentState.length;
 
 
             // Отключаем Dash через корутину
             StartCoroutine(DisableDash(0.7f));
 
-            // После задержки, когда корутина завершилась, устанавливаем isDashing в false
-            anim.SetBool("isDashing", false);
+            
         }
     }
 
     private IEnumerator DisableDash(float delay)
     {
         yield return new WaitForSeconds(delay);
+
+        // После задержки, когда корутина завершилась, устанавливаем isDashing в false
+        anim.SetBool("isDashing", false);
     }
 
 }
