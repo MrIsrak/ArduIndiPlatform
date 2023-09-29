@@ -1,6 +1,7 @@
 using System.Collections; // Импортируем пространство имен для работы с коллекциями (например, списками и массивами).
 using System.Collections.Generic; // Импортируем пространство имен для работы с обобщенными коллекциями.
 using System.ComponentModel; // Импортируем пространство имен для работы с компонентами и свойствами.
+using System.Security.Cryptography;
 using System.Threading; // Импортируем пространство имен для работы с потоками.
 using UnityEngine; // Импортируем пространство имен Unity для доступа к функциональности движка.
 
@@ -11,7 +12,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
     private float horizontalInput; // Переменная для хранения ввода по горизонтали (например, клавиши A/D или стрелки).
     public float speed; // Публичное поле для настройки скорости перемещения персонажа.
-    private float jumpforce = 150000; // Публичное поле для настройки силы прыжка персонажа.
+    private float jumpforce = 200000; // Публичное поле для настройки силы прыжка персонажа.
     private bool isOnGround; // Переменная для отслеживания, находится ли персонаж на земле.
     private float CheckRadius = 0.05f; // Радиус проверки земли при использовании Physics2D.OverlapCircle.
     public float smoothness = 0.5f; // Публичное поле для настройки плавности движения.
@@ -45,7 +46,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
     }
 
-    private bool faceRight = false;
+    //private bool faceRight = false;
 
     private void Move()
     {
@@ -57,12 +58,12 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
         if (horizontalInput < 0)
         {
-            faceRight = false;
+            //faceRight = false;
             spriteRenderer.flipX = true; // Flip the sprite horizontally if moving left
         }
         else if (horizontalInput > 0)
         {
-            faceRight = true;
+            //faceRight = true;
             spriteRenderer.flipX = false; // Unflip the sprite horizontally if
         }
     }
@@ -79,40 +80,68 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     private void CheckGround()
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask); // Проверяем, находится ли персонаж на земле.
-        anim.SetBool("onGround", !isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
+        Debug.Log(isOnGround);
+        anim.SetBool("onGround", isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
     }
 
-    public int Impuls = 500000;
-    private bool isDashing = true;
+
+    public long dashForce = 999999999999999999;
 
     private void Dash()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift)) // Добавьте проверку !isDashing, чтобы не запускать Dash, если уже выполняется
         {
-            isDashing = true;
-            anim.SetBool("isDashing", isDashing);
-            
-            //anim.StopPlayback();
-            //anim.Play("Dash");
-            //Debug.Log("Dash");
-            
             //rb.velocity = new Vector2(0, 0);
+            anim.SetBool("isDashing", true);
+            //Vector2 dashDirection = faceRight ? Vector2.right : Vector2.left;
 
-            Vector2 dashDirection = faceRight ? Vector2.right : Vector2.left;
+            // Добавляем силу Impuls к Rigidbody2D
+            if (spriteRenderer.flipX == false)
+            {
+                rb.AddForce(Vector2.right * dashForce);
+            }
+            else
+            {
+                rb.AddForce(Vector2.left * dashForce);
+            }
 
-            rb.AddForce(dashDirection * Impuls);
-            Debug.Log(message: "Imp");
-            isDashing = false;
-            anim.SetBool("isDashing", isDashing);
-            StartCoroutine(DisableDash(1f));
 
-            
+
+            // Получение информации о текущей анимации
+            AnimatorStateInfo currentState = anim.GetCurrentAnimatorStateInfo(0);
+
+            // Получение длительности текущей анимации
+            float duration = currentState.length;
+
+
+            // Отключаем Dash через корутину
+            StartCoroutine(DisableDash(duration));
+
+            // После задержки, когда корутина завершилась, устанавливаем isDashing в false
+            anim.SetBool("isDashing", false);
         }
     }
 
     private IEnumerator DisableDash(float delay)
     {
         yield return new WaitForSeconds(delay);
-        //isDashing = true;
     }
+    //void Lunge()
+    //{
+
+    //    if (Input.GetKeyDown(KeyCode.LeftControl))
+    //    {
+    //        anim.StopPlayback();
+    //        anim.Play("Dash");
+
+    //        rb.velocity = new Vector2(0, 0);
+
+    //        if (spriteRenderer.flipX == false) { rb.AddForce(Vector2.right * Impuls); }
+
+    //        else { rb.AddForce(Vector2.left * Impuls); }
+    //    }
+
+
+
+    //}
 }
