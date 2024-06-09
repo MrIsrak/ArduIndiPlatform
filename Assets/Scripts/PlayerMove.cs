@@ -1,6 +1,8 @@
 using System.Collections; // Импортируем пространство имен для работы с коллекциями (например, списками и массивами).
 using System.Collections.Generic; // Импортируем пространство имен для работы с обобщенными коллекциями.
 using System.ComponentModel; // Импортируем пространство имен для работы с компонентами и свойствами.
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading; // Импортируем пространство имен для работы с потоками.
 using UnityEngine; // Импортируем пространство имен Unity для доступа к функциональности движка.
 
@@ -10,11 +12,16 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     [SerializeField] private LayerMask groundMask; // Поле groundMask для задания маски слоя земли.
 
     private float horizontalInput; // Переменная для хранения ввода по горизонтали (например, клавиши A/D или стрелки).
-    public float speed; // Публичное поле для настройки скорости перемещения персонажа.
-    private float jumpforce = 150000; // Публичное поле для настройки силы прыжка персонажа.
+    private float speed = 6f; // Публичное поле для настройки скорости перемещения персонажа.
+    public float jumpforce = 15000f; // Публичное поле для настройки силы прыжка персонажа.
+
+    bool isDashing = false;
+    bool canDash = true;
+    float dashRechargeTime = 0.5f;
+    float dashDuration=0.7f;
+
     private bool isOnGround; // Переменная для отслеживания, находится ли персонаж на земле.
     private float CheckRadius = 0.05f; // Радиус проверки земли при использовании Physics2D.OverlapCircle.
-    public float smoothness = 0.5f; // Публичное поле для настройки плавности движения.
 
 
     private SpriteRenderer spriteRenderer; // Переменная для доступа к компоненту SpriteRenderer объекта (для изменения отображения спрайта).
@@ -32,36 +39,39 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
     private void Update()
     {
+        if (isDashing)
+            return;
+        rb.velocity = new Vector2(rb.velocity.x, Physics2D.gravity.y);
         Move(); // Вызываем метод для обработки движения.
         Jump(); // Вызываем метод для обработки прыжка.
+        CheckDash();
         CheckGround(); // Вызываем метод для проверки, находится ли персонаж на земле.
+        
     }
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + moveVelocity * Time.fixedDeltaTime); // Перемещаем персонажа с учетом скорости и фиксированного времени.
-        rb.MovePosition(Vector2.Lerp(rb.position, rb.position + moveVelocity * Time.fixedDeltaTime, smoothness)); // Плавное перемещение персонажа.
+        if (isDashing)
+            return;
+
         rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
     }
 
-    private bool faceRight = false;
+    //private bool faceRight = false;
 
     private void Move()
     {
         horizontalInput = Input.GetAxis("Horizontal"); // Получаем ввод по горизонтали.
-        moveVector.x = Input.GetAxis("Horizontal"); // Сохраняем вектор движения по горизонтали.
-        moveVelocity = Vector2.right * speed * horizontalInput; // Рассчитываем скорость движения.
-
-        anim.SetFloat("Move X", Mathf.Abs(moveVector.x)); // Устанавливаем параметр анимации "Move X" на основе ввода по горизонтали.
+        anim.SetFloat("Move X", Mathf.Abs(horizontalInput)); // Устанавливаем параметр анимации "Move X" на основе ввода по горизонтали.
 
         if (horizontalInput < 0)
         {
-            faceRight = false;
+            //faceRight = false;
             spriteRenderer.flipX = true; // Flip the sprite horizontally if moving left
         }
         else if (horizontalInput > 0)
         {
-            faceRight = true;
+            //faceRight = true;
             spriteRenderer.flipX = false; // Unflip the sprite horizontally if
         }
     }
@@ -71,6 +81,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
         {
             rb.AddForce(Vector2.up * jumpforce); // Рассчитываем целевую позицию для плавного прыжка.
+            //rb.velocity += new Vector2(0, 10000);
             //rb.velocity = (Vector3.up * jumpforce);
         }
     }
@@ -78,23 +89,38 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     private void CheckGround()
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask); // Проверяем, находится ли персонаж на земле.
-        anim.SetBool("onGround", !isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
+        anim.SetBool("onGround", isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
     }
 
-    private int Impuls = 5000;
-    private void Dash()
+
+    [SerializeField] int dashForce;
+
+    private void CheckDash()
     {
-        if(Input.GetKeyDown(KeyCode.LeftShift)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash) // Добавьте проверку !isDashing, чтобы не запускать Dash, если уже выполняется
         {
-            anim.StopPlayback();
-            //anim.Play();
-
-            rb.velocity = new Vector2(0, 0);
-
-            if (!faceRight) { rb.AddForce(Vector2.left * Impuls); }
-            else { rb.AddForce(Vector2.right * Impuls); }
-
-
+            StartCoroutine("Dash");
         }
     }
+
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        anim.SetBool("isDashing", true);
+
+        int lookDirection=1;
+        if (spriteRenderer.flipX)
+            lookDirection = -1;
+
+        rb.velocity = new Vector2(lookDirection * dashForce, 0f);
+        yield return new WaitForSeconds(dashDuration);
+
+        isDashing = false;
+        anim.SetBool("isDashing", false);
+
+        yield return new WaitForSeconds(dashRechargeTime);    
+        canDash = true;
+    }
+
 }
