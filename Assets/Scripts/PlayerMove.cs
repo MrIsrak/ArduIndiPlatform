@@ -46,7 +46,7 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         Jump(); // Вызываем метод для обработки прыжка.
         CheckDash();
         CheckGround(); // Вызываем метод для проверки, находится ли персонаж на земле.
-        
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
     }
 
     private void FixedUpdate()
@@ -54,42 +54,45 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         if (isDashing)
             return;
 
-        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * speed, rb.velocity.y);
+        
     }
 
-    //private bool faceRight = false;
 
     private void Move()
     {
         horizontalInput = Input.GetAxis("Horizontal"); // Получаем ввод по горизонтали.
-        anim.SetFloat("Move X", Mathf.Abs(horizontalInput)); // Устанавливаем параметр анимации "Move X" на основе ввода по горизонтали.
 
         if (horizontalInput < 0)
         {
-            //faceRight = false;
             spriteRenderer.flipX = true; // Flip the sprite horizontally if moving left
         }
         else if (horizontalInput > 0)
         {
-            //faceRight = true;
             spriteRenderer.flipX = false; // Unflip the sprite horizontally if
         }
     }
 
     private void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
+
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround == true)
         {
-            rb.AddForce(Vector2.up * jumpforce); // Рассчитываем целевую позицию для плавного прыжка.
-            //rb.velocity += new Vector2(0, 10000);
-            //rb.velocity = (Vector3.up * jumpforce);
+            print("asfasd");
+            rb.AddForce(transform.up * jumpforce, ForceMode2D.Impulse);
         }
     }
 
     private void CheckGround()
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask); // Проверяем, находится ли персонаж на земле.
-        anim.SetBool("onGround", isOnGround); // Устанавливаем параметр анимации "onGround" в зависимости от состояния на земле.
+        if(isOnGround == false)
+        {
+            anim.Play("JumptoFall");
+        }
+        else
+        {
+            anim.Play("Idle");
+        }
     }
 
 
@@ -97,9 +100,9 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
 
     private void CheckDash()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash) // Добавьте проверку !isDashing, чтобы не запускать Dash, если уже выполняется
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && !isDashing) // Added check for !isDashing
         {
-            StartCoroutine("Dash");
+            StartCoroutine(Dash());
         }
     }
 
@@ -107,9 +110,9 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
     {
         canDash = false;
         isDashing = true;
-        anim.SetBool("isDashing", true);
+        anim.Play("Dash");
 
-        int lookDirection=1;
+        int lookDirection = 1;
         if (spriteRenderer.flipX)
             lookDirection = -1;
 
@@ -117,10 +120,10 @@ public class PlayerMove : MonoBehaviour // Объявляем класс PlayerMove, который н
         yield return new WaitForSeconds(dashDuration);
 
         isDashing = false;
-        anim.SetBool("isDashing", false);
 
-        yield return new WaitForSeconds(dashRechargeTime);    
+        yield return new WaitForSeconds(dashRechargeTime);
         canDash = true;
     }
+
 
 }
