@@ -1,14 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+
+    [Header("UI")]
+    public GameObject dasher;
+
+
+
+    [Header("Settings")]
     [SerializeField] private Transform footPos;
     [SerializeField] private LayerMask groundMask;
 
     private float horizontalInput;
-    private float speed = 6f;
+    private float speed = 3f;
     public float jumpforce = 15f;
 
     private bool isDashing = false;
@@ -21,11 +27,9 @@ public class PlayerMove : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Animator anim;
-    private Vector2 moveVelocity;
-    private Vector2 moveVector;
     private Rigidbody2D rb;
 
-    [SerializeField] int dashForce;
+    [SerializeField] private int dashForce;
 
     private void Start()
     {
@@ -36,11 +40,15 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        if (isDashing)
+        // Проверка на ускорение
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && !isDashing)
+        {
+            
+            StartCoroutine(Dash());
             return;
+        }
 
         Move();
-        CheckDash();
         CheckGround();
 
         if (isOnGround && Input.GetKeyDown(KeyCode.Space))
@@ -48,13 +56,10 @@ public class PlayerMove : MonoBehaviour
             Jump();
         }
 
-        rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
-    }
-
-    private void FixedUpdate()
-    {
-        if (isDashing)
-            return;
+        if (!isDashing) // Обновление скорости только если не идет ускорение
+        {
+            rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
+        }
     }
 
     private void Move()
@@ -75,21 +80,17 @@ public class PlayerMove : MonoBehaviour
     {
         isOnGround = Physics2D.OverlapCircle(footPos.position, CheckRadius, groundMask);
 
-        if (isOnGround == false)
+        if (!isOnGround)
         {
             anim.Play("JumptoFall");
         }
-        else
+        else if(isOnGround == true && canDash == true)
         {
             anim.Play("Idle");
         }
-    }
-
-    private void CheckDash()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && !isDashing)
+        else if( isOnGround ==  true && canDash == false)
         {
-            StartCoroutine(Dash());
+            return;
         }
     }
 
@@ -99,8 +100,12 @@ public class PlayerMove : MonoBehaviour
         isDashing = true;
         anim.Play("Dash");
 
+        Animator animator = dasher.GetComponent<Animator>();
+        animator.speed = dashRechargeTime + 0.2f;
+        animator.Play("dasher");
+
         int lookDirection = spriteRenderer.flipX ? -1 : 1;
-        rb.velocity = new Vector2(lookDirection * dashForce, 0f);
+        rb.velocity = new Vector2(lookDirection * dashForce, rb.velocity.y);
 
         yield return new WaitForSeconds(dashDuration);
 
