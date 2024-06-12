@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\Unity\\Israel\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|D:\\Unity\\Israel\\assets\\scripts\\jump.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\jump.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|d:\\unity\\israel\\assets\\scripts\\playermove.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playermove.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|D:\\Unity\\Israel\\assets\\scripts\\playermove.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playermove.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|D:\\Unity\\Israel\\assets\\scripts\\jump.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\jump.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,11 +18,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "jump.cs",
               "DocumentMoniker": "D:\\Unity\\Israel\\Assets\\Scripts\\jump.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\jump.cs",
@@ -30,18 +30,17 @@
               "RelativeToolTip": "Assets\\Scripts\\jump.cs",
               "ViewState": "AQIAAAsAAAAAAAAAAAAQwBIAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-11T15:37:19.764Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-11T15:37:19.764Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "PlayerMove.cs",
               "DocumentMoniker": "D:\\Unity\\Israel\\Assets\\Scripts\\PlayerMove.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerMove.cs",
               "ToolTip": "D:\\Unity\\Israel\\Assets\\Scripts\\PlayerMove.cs",
               "RelativeToolTip": "Assets\\Scripts\\PlayerMove.cs",
-              "ViewState": "AQIAAAgAAAAAAAAAAAAQwB0AAAAbAAAA",
+              "ViewState": "AQIAAHIAAAAAAAAAAAAiwHoAAABBAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-11T09:01:39.596Z",
               "EditorCaption": ""
