@@ -20,7 +20,8 @@ public class EnemyAI : MonoBehaviour
     private bool isGrounded;
     private bool facingRight = true;
     private Vector3 previousPosition;
-    private Vector3 transformer;
+    private Rigidbody2D transformer;
+    private Vector3 transformer2;
     public float distanceThreshold = 2f; // –ассто€ние, на котором начинаем бежать за игроком
 
 
@@ -151,8 +152,9 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            transformer = rb.transform.position;
-            Instantiate(text_1, transformer, Quaternion.Euler(0, 0, 0));
+            transformer = GetComponent<Rigidbody2D>();
+            transformer2 = transformer.position;
+            Instantiate(text_1, transformer2, Quaternion.Euler(0, 0, 0));
             anim.Play("Enemy Hit");
         }
     }
@@ -169,7 +171,9 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            Instantiate(text_2, transformer, Quaternion.Euler(0, 0, 0));
+            transformer = GetComponent<Rigidbody2D>();
+            transformer2 = transformer.position;
+            Instantiate(text_2, transformer2, Quaternion.Euler(0, 0, 0));
             anim.Play("Enemy Hit");
         }
     }

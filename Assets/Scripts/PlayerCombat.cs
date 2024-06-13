@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
-    private float beamLength = 0.7f;
+    private float beamLength = -4f;
     private Rigidbody2D rb;
-    private bool facingRight = true;
     public float pushForce = 40f;
 
     void Start()
@@ -16,25 +15,22 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    void Update()
+    public void Cast()
     {
-        if (rb.velocity.x > 0.01f)
-        {
-            facingRight = true;
-        }
-        else if (rb.velocity.x < -0.01f)
-        {
-            facingRight = false;
-        }
-    }
+        // Начальная точка внутри игрока
+        Vector2 startPosition = (Vector2)transform.position;
 
-    public void cast()
-    {
-        Vector2 startPosition = new Vector2(transform.position.x - 0.2f, transform.position.y - 0.1f);
-        Vector2 endPosition = startPosition + (facingRight ? Vector2.right : Vector2.left) * beamLength;
+        // Определяем направление луча на основе скорости движения игрока
+        Vector2 direction = rb.velocity.normalized; // Направление движения игрока
 
-        RaycastHit2D[] hits = Physics2D.LinecastAll(startPosition, endPosition);
-        Debug.DrawLine(startPosition, endPosition, Color.red);
+        Vector2 endPosition = startPosition + direction * beamLength;
+
+        Debug.Log($"Start: {startPosition}, End: {endPosition}");
+
+        // Отладочная визуализация луча
+        Debug.DrawRay(startPosition, direction * beamLength, Color.red, 0.5f);
+
+        RaycastHit2D[] hits = Physics2D.RaycastAll(startPosition, direction, beamLength);
 
         foreach (var hit in hits)
         {
@@ -44,38 +40,38 @@ public class PlayerCombat : MonoBehaviour
                 {
                     continue;
                 }
+
                 if (hit.collider.CompareTag("enemy"))
                 {
                     Debug.Log("Hit Enemy: " + hit.collider.name);
 
-                    // Find the component with the damage method
-                    var enemyScript = hit.collider.GetComponent<MonoBehaviour>();
+                    var enemyScript = hit.collider.GetComponent<EnemyAI>(); // Получаем скрипт EnemyAI
                     if (enemyScript != null)
                     {
                         Rigidbody2D enemyRb = hit.collider.GetComponent<Rigidbody2D>();
 
-                        // Get the player position
-                        Vector2 playerPosition = rb.position;
-
-                        // Get the enemy position
-                        Vector2 enemyPosition = enemyRb.position;
-
-                        // Determine the push direction from player to enemy
-                        Vector2 pushDirection = (enemyPosition - playerPosition).normalized;
-
-                        // Apply push force in the direction from player to enemy
-                        enemyRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
-
-                        // Call the appropriate damage method based on the dashing state
-                        var methodName = PlayerMove.isDashing ? "ult_damage" : "damage";
-                        var method = enemyScript.GetType().GetMethod(methodName);
-                        if (method != null)
+                        if (enemyRb != null)
                         {
-                            method.Invoke(enemyScript, null);
+                            Vector2 playerPosition = rb.position;
+                            Vector2 enemyPosition = enemyRb.position;
+
+                            Vector2 pushDirection = (enemyPosition - playerPosition).normalized;
+                            enemyRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
+
+                            // Выбираем метод в зависимости от isDashing
+                            if (PlayerMove.isDashing)
+                            {
+                                enemyScript.ult_damage();
+                            }
+                            else
+                            {
+                                enemyScript.damage();
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 }
