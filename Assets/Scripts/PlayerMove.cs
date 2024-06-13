@@ -19,7 +19,7 @@ public class PlayerMove : MonoBehaviour
     private float dashDuration = 0.7f; // Длительность рывка
 
     private float horizontalInput; // Ввод по горизонтали
-    private bool isDashing = false; // Флаг рывка
+    public static bool isDashing = false; // Флаг рывка
     private bool canDash = true; // Флаг возможности рывка
     private bool isOnGround; // Флаг на земле
     private bool hit = false; // Флаг атаки
