@@ -1,3 +1,4 @@
+using UnityEditorInternal;
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
@@ -11,12 +12,15 @@ public class EnemyAI : MonoBehaviour
     public Transform groundCheck; // Точка для проверки касания земли
     public float groundCheckRadius = 0.2f; // Радиус проверки касания земли
     public LayerMask groundLayer; // Слой земли
+    public GameObject text_1;
+    public GameObject text_2;
 
     private Animator anim;
     private Rigidbody2D rb;
     private bool isGrounded;
     private bool facingRight = true;
     private Vector3 previousPosition;
+    private Vector3 transformer;
     public float distanceThreshold = 2f; // Расстояние, на котором начинаем бежать за игроком
 
 
@@ -71,7 +75,7 @@ public class EnemyAI : MonoBehaviour
         RaycastHit2D hitInfo;
 
         // Определяем позицию начала луча в середине нижней части монстра
-        Vector2 origin = new Vector2(transform.position.x, transform.position.y - 0.2f);
+        Vector2 origin = new Vector2(transform.position.x, transform.position.y - 0.3f);
 
         // Определяем направление луча в зависимости от направления монстра
         Vector2 direction;
@@ -139,13 +143,16 @@ public class EnemyAI : MonoBehaviour
     {
         heal--;
         print(heal);
-        if(heal <= 0)
+        anim.Play("Enemy Hit");
+        if (heal <= 0)
         {
             dead = true;
             anim.Play("Enemy Death");
         }
         else
         {
+            transformer = rb.transform.position;
+            Instantiate(text_1, transformer, Quaternion.Euler(0, 0, 0));
             anim.Play("Enemy Hit");
         }
     }
@@ -154,6 +161,7 @@ public class EnemyAI : MonoBehaviour
     {
         heal -= 2;
         print(heal);
+        anim.Play("Enemy Hit");
         if (heal <= 0)
         {
             dead = true;
@@ -161,6 +169,7 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
+            Instantiate(text_2, transformer, Quaternion.Euler(0, 0, 0));
             anim.Play("Enemy Hit");
         }
     }
