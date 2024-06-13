@@ -44,15 +44,10 @@ public class PlayerMove : MonoBehaviour
             return;
         }
 
-        HandleMovement(); // Обработка движения
+        run(); // Обработка движения
         CheckGroundStatus(); // Проверка, на земле ли персонаж
-        HandleAttack(); // Обработка атаки
-
-        // Прыжок
-        if (isOnGround && Input.GetKeyDown(KeyCode.Space) && !hit)
-        {
-            Jump();
-        }
+        Attack(); // Обработка атаки
+        Jump();  // Прыжок
 
         // Обновление скорости, если не идет рывок и не атакуем
         if (!isDashing && !hit)
@@ -62,7 +57,7 @@ public class PlayerMove : MonoBehaviour
     }
 
     // Обработка движения персонажа
-    private void HandleMovement()
+    private void run()
     {
         if (hit)
         {
@@ -130,11 +125,14 @@ public class PlayerMove : MonoBehaviour
     // Прыжок
     private void Jump()
     {
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce); // Применение силы прыжка
+        if (isOnGround && Input.GetKeyDown(KeyCode.Space) && !hit)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce); // Применение силы прыжка
+        }
     }
 
     // Обработка атаки
-    private void HandleAttack()
+    private void Attack()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0) && !hit)
         {
