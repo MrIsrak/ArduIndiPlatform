@@ -72,7 +72,14 @@ public class PlayerMove : MonoBehaviour
         anim.SetBool("isRun", horizontalInput != 0 && !isDashing);
 
         // Изменение направления спрайта
-        spriteRenderer.flipX = horizontalInput < 0;
+        if (horizontalInput > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+        else if (horizontalInput < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
     }
 
     // Проверка, на земле ли персонаж

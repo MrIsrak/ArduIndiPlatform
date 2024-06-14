@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
-    public float beamLength = 2.0f; 
+    private float beamLength = -4f;
     private Rigidbody2D rb;
-    private bool facingRight = true;
     public float pushForce = 40f;
 
     void Start()
@@ -16,25 +15,22 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    void Update()
+    public void Cast()
     {
-        if (rb.velocity.x > 0.01f)
-        {
-            facingRight = true;
-        }
-        else if (rb.velocity.x < -0.01f)
-        {
-            facingRight = false;
-        }
-    }
+        // Начальная точка внутри игрока
+        Vector2 startPosition = (Vector2)transform.position;
 
-    public void cast()
-    {
-        Vector2 startPosition = new Vector2(transform.position.x - 0.5f, transform.position.y - 0.1f);
-        Vector2 direction = facingRight ? Vector2.right : Vector2.left;
+        // Определяем направление луча на основе скорости движения игрока
+        Vector2 direction = rb.velocity.normalized; // Направление движения игрока
+
+        Vector2 endPosition = startPosition + direction * beamLength;
+
+        Debug.Log($"Start: {startPosition}, End: {endPosition}");
+
+        // Отладочная визуализация луча
+        Debug.DrawRay(startPosition, direction * beamLength, Color.red, 0.5f);
 
         RaycastHit2D[] hits = Physics2D.RaycastAll(startPosition, direction, beamLength);
-        Debug.DrawLine(startPosition, startPosition + direction * beamLength, Color.red);
 
         foreach (var hit in hits)
         {
@@ -44,52 +40,38 @@ public class PlayerCombat : MonoBehaviour
                 {
                     continue;
                 }
-                if (hit.collider.CompareTag("enemy") && PlayerMove.isDashing == false)
+
+                if (hit.collider.CompareTag("enemy"))
                 {
                     Debug.Log("Hit Enemy: " + hit.collider.name);
 
-                    // Find the component with the damage method
-                    var enemyScript = hit.collider.GetComponent<MonoBehaviour>();
+                    var enemyScript = hit.collider.GetComponent<EnemyAI>(); // Получаем скрипт EnemyAI
                     if (enemyScript != null)
                     {
-                        var method = enemyScript.GetType().GetMethod("damage");
-
-
-
                         Rigidbody2D enemyRb = hit.collider.GetComponent<Rigidbody2D>();
-                        Vector2 pushDirection = (enemyRb.position - rb.position).normalized;
-                        enemyRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
 
-
-
-                        if (method != null)
+                        if (enemyRb != null)
                         {
-                            method.Invoke(enemyScript, null);
-                        }
-                    }
-                }
-                else if (hit.collider.CompareTag("enemy") && PlayerMove.isDashing == true)
-                    {
-                        Debug.Log("Hit Enemy: " + hit.collider.name);
+                            Vector2 playerPosition = rb.position;
+                            Vector2 enemyPosition = enemyRb.position;
 
-                        // Find the component with the damage method
-                        var enemyScript = hit.collider.GetComponent<MonoBehaviour>();
-                        if (enemyScript != null)
-                        {
+                            Vector2 pushDirection = (enemyPosition - playerPosition).normalized;
+                            enemyRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
 
-                        Rigidbody2D enemyRb = hit.collider.GetComponent<Rigidbody2D>();
-                        Vector2 pushDirection = (enemyRb.position - rb.position).normalized;
-                        enemyRb.AddForce(pushDirection * pushForce * 3, ForceMode2D.Impulse);
-
-                        var method = enemyScript.GetType().GetMethod("ult_damage");
-                            if (method != null)
+                            // Выбираем метод в зависимости от isDashing
+                            if (PlayerMove.isDashing)
                             {
-                                method.Invoke(enemyScript, null);
+                                enemyScript.ult_damage();
+                            }
+                            else
+                            {
+                                enemyScript.damage();
                             }
                         }
                     }
-                break;
+                }
             }
         }
     }
+
 }
