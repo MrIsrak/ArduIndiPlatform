@@ -2,9 +2,11 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
-    private float beamLength = -4f;
+    private float beamLength = -8f; // Увеличена длина луча для атаки
     private Rigidbody2D rb;
     public float pushForce = 40f;
+    public int health = 3; // Здоровье игрока
+    public bool isAttacking = false; // Флаг атаки
 
     void Start()
     {
@@ -17,17 +19,10 @@ public class PlayerCombat : MonoBehaviour
 
     public void Cast()
     {
-        // Начальная точка внутри игрока
         Vector2 startPosition = (Vector2)transform.position;
-
-        // Определяем направление луча на основе скорости движения игрока
-        Vector2 direction = rb.velocity.normalized; // Направление движения игрока
-
+        Vector2 direction = rb.velocity.normalized;
         Vector2 endPosition = startPosition + direction * beamLength;
 
-        Debug.Log($"Start: {startPosition}, End: {endPosition}");
-
-        // Отладочная визуализация луча
         Debug.DrawRay(startPosition, direction * beamLength, Color.red, 0.5f);
 
         RaycastHit2D[] hits = Physics2D.RaycastAll(startPosition, direction, beamLength);
@@ -44,28 +39,38 @@ public class PlayerCombat : MonoBehaviour
                 if (hit.collider.CompareTag("enemy"))
                 {
                     Debug.Log("Hit Enemy: " + hit.collider.name);
+                    var enemyScript = hit.collider.GetComponent<IEnemy>();
 
-                    var enemyScript = hit.collider.GetComponent<EnemyAI>(); // Получаем скрипт EnemyAI
                     if (enemyScript != null)
                     {
                         Rigidbody2D enemyRb = hit.collider.GetComponent<Rigidbody2D>();
-
                         if (enemyRb != null)
                         {
                             Vector2 playerPosition = rb.position;
                             Vector2 enemyPosition = enemyRb.position;
-
                             Vector2 pushDirection = (enemyPosition - playerPosition).normalized;
-                            enemyRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
 
-                            // Выбираем метод в зависимости от isDashing
-                            if (PlayerMove.isDashing)
+                            if (!PlayerMove.isDashing)
                             {
-                                enemyScript.ult_damage();
+                                enemyRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
                             }
                             else
                             {
-                                enemyScript.damage();
+                                enemyRb.AddForce(pushDirection * pushForce * 2, ForceMode2D.Impulse);
+                            }
+
+                            if (enemyScript.Health <= 0)
+                            {
+                                return;
+                            }
+
+                            if (PlayerMove.isDashing)
+                            {
+                                enemyScript.TakeUltDamage();
+                            }
+                            else
+                            {
+                                enemyScript.TakeDamage();
                             }
                         }
                     }
@@ -74,4 +79,27 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    // Метод для нанесения урона игроку
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        Debug.Log("Player Health: " + health);
+        if (health <= 0)
+        {
+            Debug.Log("Player is dead");
+        }
+    }
+
+    // Метод для обработки начала атаки
+    public void StartAttack()
+    {
+        isAttacking = true;
+        Cast(); // Выпуск луча при начале атаки
+    }
+
+    // Метод для обработки завершения атаки
+    public void EndAttack()
+    {
+        isAttacking = false;
+    }
 }

@@ -1,47 +1,35 @@
-using UnityEditorInternal;
 using UnityEngine;
+using System.Collections;
 
-public class EnemyAI : MonoBehaviour
+public class enemy_slime : Enemy
 {
-    public int heal = 5;
-    private bool dead = false;
-
-    public Transform player; // Ссылка на объект игрока
-    public float moveSpeed = 2f; // Скорость движения противника
-    public float jumpForce = 5f; // Сила прыжка противника
-    public Transform groundCheck; // Точка для проверки касания земли
-    public float groundCheckRadius = 0.2f; // Радиус проверки касания земли
-    public LayerMask groundLayer; // Слой земли
-    public GameObject text_1;
-    public GameObject text_2;
-
-    private Animator anim;
-    private Rigidbody2D rb;
+    public GameObject[] drop;
+    public Transform player;
+    public float moveSpeed = 2f;
+    public float jumpForce = 5f;
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.2f;
+    public LayerMask groundLayer;
     private bool isGrounded;
     private bool facingRight = true;
     private Vector3 previousPosition;
-    private Rigidbody2D transformer;
-    private Vector3 transformer2;
-    public float distanceThreshold = 2f; // Расстояние, на котором начинаем бежать за игроком
+    public float distanceThreshold = 2f;
+    public float pushForce = 10f;  // Сила отталкивания игрока
+    private Coroutine damageCoroutine;  // Корутина для нанесения урона
 
-
-    void Start()
+    protected override void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-
+        base.Start();
     }
 
     void Update()
     {
-        if (dead == false)
+        if (!dead)
         {
             isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-            // Проверка расстояния до игрока
             if (player != null && Vector2.Distance(transform.position, player.position) <= distanceThreshold)
             {
-                // Перемещение противника к игроку
                 MoveTowardsPlayer();
                 anim.Play("Enemy Run");
             }
@@ -51,15 +39,10 @@ public class EnemyAI : MonoBehaviour
             }
 
             Jump();
-
-            // Обновление предыдущей позиции
             previousPosition = transform.position;
-
-            // Зеркалирование противника в зависимости от направления движения
             FlipTowardsPlayer();
         }
     }
-
 
     void MoveTowardsPlayer()
     {
@@ -70,28 +53,13 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-
     void Jump()
     {
-        RaycastHit2D hitInfo;
-
-        // Определяем позицию начала луча в середине нижней части монстра
         Vector2 origin = new Vector2(transform.position.x, transform.position.y - 0.3f);
-
-        // Определяем направление луча в зависимости от направления монстра
-        Vector2 direction;
-        if (transform.localScale.x > 0)
-        {
-            direction = Vector2.right; // Если монстр не отзеркален, луч направлен вправо
-        }
-        else
-        {
-            direction = Vector2.left; // Если монстр отзеркален, луч направлен влево
-        }
-
+        Vector2 direction = transform.localScale.x > 0 ? Vector2.right : Vector2.left;
         float maxDistance = Random.Range(0.01f, 0.5f);
         LayerMask groundLayerMask = LayerMask.GetMask("ground");
-        hitInfo = Physics2D.Raycast(origin, direction, maxDistance, groundLayerMask);
+        RaycastHit2D hitInfo = Physics2D.Raycast(origin, direction, maxDistance, groundLayerMask);
 
         if (hitInfo.collider != null && isGrounded)
         {
@@ -101,15 +69,6 @@ public class EnemyAI : MonoBehaviour
 
         Debug.DrawRay(origin, direction * maxDistance, Color.red);
     }
-
-
-
-
-
-
-
-
-
 
     void FlipTowardsPlayer()
     {
@@ -128,7 +87,6 @@ public class EnemyAI : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        // Рисование радиуса проверки касания земли в режиме сцены
         if (groundCheck != null)
         {
             Gizmos.color = Color.red;
@@ -136,45 +94,78 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-
-
-
-
-    public void damage()
+    public override void TakeDamage()
     {
-        heal--;
-        print(heal);
-        anim.Play("Enemy Hit");
-        if (heal <= 0)
+        base.TakeDamage();
+        if (health <= 0)
         {
-            dead = true;
-            anim.Play("Enemy Death");
-        }
-        else
-        {
-            transformer = GetComponent<Rigidbody2D>();
-            transformer2 = transformer.position;
-            Instantiate(text_1, transformer2, Quaternion.Euler(0, 0, 0));
-            anim.Play("Enemy Hit");
+            SpawnLoot();
         }
     }
 
-    public void ult_damage()
+    public override void TakeUltDamage()
     {
-        heal -= 2;
-        print(heal);
-        anim.Play("Enemy Hit");
-        if (heal <= 0)
+        base.TakeUltDamage();
+        if (health <= 0)
         {
-            dead = true;
-            anim.Play("Enemy Death");
+            SpawnLoot();
         }
-        else
+    }
+
+    private void SpawnLoot()
+    {
+        foreach (var item in drop)
         {
-            transformer = GetComponent<Rigidbody2D>();
-            transformer2 = transformer.position;
-            Instantiate(text_2, transformer2, Quaternion.Euler(0, 0, 0));
-            anim.Play("Enemy Hit");
+            GameObject obj = Instantiate(item, transform.position, Quaternion.identity);
+            Rigidbody2D rbObj = obj.GetComponent<Rigidbody2D>();
+            rbObj.AddForce(Vector2.up * 4, ForceMode2D.Impulse);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+        {
+            Rigidbody2D playerRb = collision.collider.GetComponent<Rigidbody2D>();
+            if (playerRb != null)
+            {
+                Vector2 pushDirection = (playerRb.position - rb.position).normalized;
+                playerRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
+
+                PlayerCombat playerCombat = collision.collider.GetComponent<PlayerCombat>();
+                if (playerCombat != null)
+                {
+                    if (damageCoroutine == null)
+                    {
+                        damageCoroutine = StartCoroutine(DealDamageOverTime(playerCombat));
+                    }
+                }
+            }
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+        {
+            if (damageCoroutine != null)
+            {
+                StopCoroutine(damageCoroutine);
+                damageCoroutine = null;
+            }
+        }
+    }
+
+    private IEnumerator DealDamageOverTime(PlayerCombat playerCombat)
+    {
+        yield return new WaitForSeconds(1f); // Ожидание 2 секунды перед нанесением урона
+        while (true)
+        {
+            if (!playerCombat.isAttacking || PlayerMove.isDashing)  // Проверяем, атакует ли игрок или использует деш
+            {
+                playerCombat.TakeDamage(1);
+            }
+            yield return new WaitForSeconds(1f);
         }
     }
 }
