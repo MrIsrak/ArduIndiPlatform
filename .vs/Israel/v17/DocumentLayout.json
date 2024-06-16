@@ -3,19 +3,23 @@
   "WorkspaceRootPath": "D:\\Unity\\Israel\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|d:\\unity\\israel\\assets\\scripts\\playermove.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|d:\\unity\\israel\\assets\\objects\\streetlight\\streetlight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\objects\\streetlight\\streetlight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|D:\\Unity\\Israel\\assets\\scripts\\playermove.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playermove.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|d:\\unity\\israel\\assets\\scripts\\playercombat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|D:\\Unity\\Israel\\assets\\scripts\\playercombat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playercombat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|d:\\unity\\israel\\assets\\scripts\\enemy_slime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|D:\\Unity\\Israel\\assets\\scripts\\enemy_slime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy_slime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|d:\\unity\\israel\\assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|D:\\Unity\\Israel\\assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{52B5548E-D171-64F6-25B4-0E9906AF0070}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -31,6 +35,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "streetLight.cs",
+              "DocumentMoniker": "D:\\Unity\\Israel\\Assets\\objects\\streetLight\\streetLight.cs",
+              "RelativeDocumentMoniker": "Assets\\objects\\streetLight\\streetLight.cs",
+              "ToolTip": "D:\\Unity\\Israel\\Assets\\objects\\streetLight\\streetLight.cs",
+              "RelativeToolTip": "Assets\\objects\\streetLight\\streetLight.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAAQwCYAAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-15T18:30:53.715Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "PlayerMove.cs",
               "DocumentMoniker": "D:\\Unity\\Israel\\Assets\\Scripts\\PlayerMove.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerMove.cs",
@@ -38,12 +55,11 @@
               "RelativeToolTip": "Assets\\Scripts\\PlayerMove.cs",
               "ViewState": "AQIAAIsAAAAAAAAAAAAWwJ4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-15T14:49:59.476Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-15T14:49:59.476Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "PlayerCombat.cs",
               "DocumentMoniker": "D:\\Unity\\Israel\\Assets\\Scripts\\PlayerCombat.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerCombat.cs",
@@ -51,12 +67,11 @@
               "RelativeToolTip": "Assets\\Scripts\\PlayerCombat.cs",
               "ViewState": "AQIAAEAAAAAAAAAAAAAowGkAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-15T14:27:26.098Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-15T14:27:26.098Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "enemy.cs",
               "DocumentMoniker": "D:\\Unity\\Israel\\Assets\\Scripts\\enemy.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\enemy.cs",
@@ -64,12 +79,11 @@
               "RelativeToolTip": "Assets\\Scripts\\enemy.cs",
               "ViewState": "AQIAABcAAAAAAAAAAAAQwD4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-15T09:48:09.431Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-15T09:48:09.431Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "enemy_slime.cs",
               "DocumentMoniker": "D:\\Unity\\Israel\\Assets\\Scripts\\enemy_slime.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\enemy_slime.cs",
@@ -77,8 +91,7 @@
               "RelativeToolTip": "Assets\\Scripts\\enemy_slime.cs",
               "ViewState": "AQIAAH8AAAAAAAAAAAAowKIAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-15T09:45:41.923Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-15T09:45:41.923Z"
             }
           ]
         }
